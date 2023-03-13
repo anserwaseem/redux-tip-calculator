@@ -9,8 +9,11 @@ import {
 
 const mapStateToProps = (state, ownProps) => {
   const item = state.items.find((item) => item.uuid === ownProps.uuid);
-  item.total = item.price * item.quantity;
-  return { ...item };
+  //   item.total = item.price * item.quantity;
+  return {
+    total: item.price * item.quantity,
+    ...item
+  };
 };
 
 const mapDispatchToProps = (dispatch, ownProps) => {
