@@ -12,7 +12,7 @@ Let's start by creating some initial state for our application.
 const initialState = [
   { uuid: 1, name: 'Tofu Roast', price: 14, quantity: 1 },
   { uuid: 2, name: 'Vegan Ham', price: 12, quantity: 1 }
-]
+];
 ```
 
 We'll also start with the world's simplest reducer again.
@@ -150,11 +150,11 @@ In order to update the state—and subsequently the UI, we're going to need to d
 We'll use the aciton creator pattern to format our action for us in `reducer.js`.
 
 ```js
-export const ADD_NEW_ITEM = 'ADD_NEW_ITEM';
+export const ITEM_ADDED = 'ITEM_ADDED';
 
 export const addNewItem = (name, price) => {
   return {
-    type: ADD_NEW_ITEM,
+    type: ITEM_ADDED,
     payload: {
       uuid: Date.now(),
       name,
@@ -169,7 +169,7 @@ Next, we'll update the reducer.
 
 ```js
 export const reducer = (state = initialState, action) => {
-  if (action.type === ADD_NEW_ITEM) {
+  if (action.type === ITEM_ADDED) {
     return [...state, action.payload];
   }
 
@@ -181,7 +181,7 @@ Let's try out firing an action from the developer tools.
 
 ```js
 {
-  type: 'ADD_NEW_ITEM',
+  type: 'ITEM_ADDED',
   payload: { uuid: 3, name: 'Braised Seitan', price: 12, quantity: 1 }
 }
 ```
@@ -295,7 +295,7 @@ And then we need to add some logic to the reducer.
 
 ```js
 if (action.type === REMOVE_ITEM) {
-  return state.filter(item => item.uuid !== action.payload.uuid);
+  return state.filter((item) => item.uuid !== action.payload.uuid);
 }
 ```
 
@@ -335,7 +335,7 @@ const dispatch = useDispatch();
   onClick={() => dispatch(removeItem(uuid))}
 >
   Remove
-</Button>
+</Button>;
 ```
 
 Again, not bad, but it's really tying our state management to our view layer again. (Granted, this is a general complain about hooks.)
@@ -488,7 +488,7 @@ What if we could figure out if things have changed that matter for this componen
 
 ```js
 const getMenuItem = (state, props) => {
-  return state.find((item) => item.uuid === props.uuid)
+  return state.find((item) => item.uuid === props.uuid);
 };
 
 const menuItem = createSelector([getMenuItem], (item) => {
@@ -581,11 +581,11 @@ export const newInitialState = {
 
 None of our actions should need to change, but our reducer will need to get a little more complex.
 
-**Exercise**: I'll do `ADD_NEW_ITEM` and `UPDATE_QUANTITY`, you do `UPDATE_PRICE` and `UPDATE_QUANTITY`.
+**Exercise**: I'll do `ITEM_ADDED` and `UPDATE_QUANTITY`, you do `UPDATE_PRICE` and `UPDATE_QUANTITY`.
 
 ```js
 export const reducer = (state = newInitialState, action) => {
-  if (action.type === ADD_NEW_ITEM) {
+  if (action.type === ITEM_ADDED) {
     return {
       items: {
         ...state.items,
@@ -650,7 +650,7 @@ We can use this pattern for the entire reducer.
 
 ```js
 export const reducer = produce((state = newInitialState, action) => {
-  if (action.type === ADD_NEW_ITEM) {
+  if (action.type === ITEM_ADDED) {
     state.items[action.payload.uuid] = action.payload;
     state.itemIds.push(action.payload.uuid);
   }
@@ -678,7 +678,7 @@ One of the cool things in Redux is that all actions flow through all of the redu
 
 ```js
 export const itemReducer = produce((state = newInitialState.items, action) => {
-  if (action.type === ADD_NEW_ITEM) {
+  if (action.type === ITEM_ADDED) {
     state[action.payload.uuid] = action.payload;
   }
 
@@ -699,7 +699,7 @@ export const itemReducer = produce((state = newInitialState.items, action) => {
 
 export const itemIdReducer = produce(
   (state = newInitialState.itemIds, action) => {
-    if (action.type === ADD_NEW_ITEM) {
+    if (action.type === ITEM_ADDED) {
       state.push(action.payload.uuid);
     }
 
@@ -766,20 +766,20 @@ export const TipSelect = connect(
   mapStateToProps,
   mapDispatchToProps
 )(({ amount, updateTip }) => {
-return (
-  <Box marginY="space80">
-    <Label htmlFor="tip-amount">How much would you like to tip?</Label>
-    <Select
-      id="tip-amount"
-      value={amount}
-      onChange={(event) => updateTip(event.target.value)}
-    >
-      <Option value="15">15%</Option>
-      <Option value="20">20%</Option>
-      <Option value="25">25%</Option>
-    </Select>
-  </Box>
-);
+  return (
+    <Box marginY="space80">
+      <Label htmlFor="tip-amount">How much would you like to tip?</Label>
+      <Select
+        id="tip-amount"
+        value={amount}
+        onChange={(event) => updateTip(event.target.value)}
+      >
+        <Option value="15">15%</Option>
+        <Option value="20">20%</Option>
+        <Option value="25">25%</Option>
+      </Select>
+    </Box>
+  );
 });
 ```
 
