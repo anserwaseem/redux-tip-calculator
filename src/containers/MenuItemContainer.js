@@ -1,4 +1,5 @@
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import MenuItem from '../components/MenuItem';
 import {
   removeItem,
@@ -6,13 +7,24 @@ import {
   updateItemQuantity
 } from '../store/items/actions';
 
-const mapDispatchToProps = (dispatch, ownProps) => {
-  return {
-    remove: () => dispatch(removeItem(ownProps.uuid)),
-    updatePrice: (price) => dispatch(updateItemPrice(ownProps.uuid, price)),
-    updateQuantity: (quantity) =>
-      dispatch(updateItemQuantity(ownProps.uuid, quantity))
-  };
+const mapStateToProps = (state, ownProps) => {
+  const item = state.items.find((item) => item.uuid === ownProps.uuid);
+  item.total = item.price * item.quantity;
+  return { ...item };
 };
 
-export const MenuItemContainer = connect(null, mapDispatchToProps)(MenuItem);
+const mapDispatchToProps = (dispatch, ownProps) => {
+  return bindActionCreators(
+    {
+      remove: () => removeItem(ownProps.uuid),
+      updatePrice: (price) => updateItemPrice(ownProps.uuid, price),
+      updateQuantity: (quantity) => updateItemQuantity(ownProps.uuid, quantity)
+    },
+    dispatch
+  );
+};
+
+export const MenuItemContainer = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(MenuItem);
